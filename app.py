@@ -30,7 +30,7 @@ st.set_page_config(page_title="ShardSquad Análise", layout="wide")
 # ==========================
 def check_password():
     def password_entered():
-        if st.session_state["password"] == os.getenv("ST_SECRET_LOGIN_PASSWORD"): 
+        if st.session_state["password"] == os.getenv["login"]["password"]:
             st.session_state["authenticated"] = True
             del st.session_state["password"]  # não guardar a senha
         else:
@@ -54,7 +54,11 @@ if not check_password():
     st.stop()
 
 # Sua connection string (do Supabase com Pooler)
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = (
+    "postgresql://postgres.rsxdlivgzvkohtzahnbs:TheRootData1475@"
+    "aws-0-sa-east-1.pooler.supabase.com:6543/postgres"
+    "?options=-c%20statement_timeout=120000"
+)
 
 # Cria engine
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_timeout=120)
@@ -109,7 +113,6 @@ def load_data():
     FROM tb_partidas_tst2
     WHERE characters_damage_data IS NOT NULL
     ORDER BY id DESC
-    LIMIT 1000
     """
     df = pd.read_sql(query, engine)
 
