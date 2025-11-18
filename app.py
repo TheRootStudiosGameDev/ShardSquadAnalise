@@ -30,7 +30,7 @@ st.set_page_config(page_title="ShardSquad Análise", layout="wide")
 # ==========================
 def check_password():
     def password_entered():
-        if st.session_state["password"] == os.getenv["login"]["password"]:
+        if st.session_state["password"] == os.getenv("ST_SECRET_LOGIN_PASSWORD"): 
             st.session_state["authenticated"] = True
             del st.session_state["password"]  # não guardar a senha
         else:
