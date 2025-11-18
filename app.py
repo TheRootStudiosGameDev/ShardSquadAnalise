@@ -5,25 +5,44 @@ import plotly.express as px
 from sqlalchemy import create_engine
 import os
 
-
-# Change the visibility of items in the toolbar, options menu,
-# and settings dialog (top right of the app).
-# Allowed values:
-# * "auto"      : Show the developer options if the app is accessed through
-#                 localhost or through Streamlit Community Cloud as a developer.
-#                 Hide them otherwise.
-# * "developer" : Show the developer options.
-# * "viewer"    : Hide the developer options.
-# * "minimal"   : Show only options set externally (e.g. through
-#                 Streamlit Community Cloud) or through st.set_page_config.
-#                 If there are no options left, hide the menu.
-# Default: "auto
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.set_option("client.toolbarMode", "minimal")
 
 
 
-st.set_page_config(page_title="ShardSquad Análise", layout="wide")
+st.set_page_config(page_title="ShardSquad Análise", layout="wide", page_icon="♦️")
 
 # ==========================
 # LOGIN SIMPLES
