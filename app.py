@@ -41,17 +41,17 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.set_option("client.toolbarMode", "minimal")
 
 
-
 st.set_page_config(page_title="ShardSquad Análise", layout="wide", page_icon="♦️")
+
 
 # ==========================
 # LOGIN SIMPLES
 # ==========================
 def check_password():
     def password_entered():
-        if st.session_state["password"] == os.getenv("ST_SECRET_LOGIN_PASSWORD"): 
+        if st.session_state["password"] == os.getenv("ST_SECRET_LOGIN_PASSWORD"):
             st.session_state["authenticated"] = True
-            del st.session_state["password"]  # não guardar a senha
+            del st.session_state["password"]
         else:
             st.session_state["password_incorrect"] = True
 
@@ -207,6 +207,12 @@ default_mp = "Não"
 diffs = ["Todas"] + sorted(df_partidas["difficulty"].dropna().unique().tolist())
 default_diff = "1"
 
+# --- Stage: padrão = "Todos"
+stages = ["Todos"] + sorted(
+    [s for s in df_partidas["stage"].dropna().unique() if pd.notna(s)]
+)
+default_stage = "Todos"
+
 # Inicializa session_state se não existir
 if "selected_version" not in st.session_state:
     st.session_state.selected_version = default_version
@@ -214,6 +220,8 @@ if "selected_mp" not in st.session_state:
     st.session_state.selected_mp = default_mp
 if "selected_diff" not in st.session_state:
     st.session_state.selected_diff = default_diff
+if "selected_stage" not in st.session_state:
+    st.session_state.selected_stage = default_stage
 
 
 # Função para atualizar o session_state quando o usuário muda o seletor
@@ -227,6 +235,10 @@ def update_mp():
 
 def update_diff():
     st.session_state.selected_diff = st.session_state.diff_key
+
+
+def update_stage():
+    st.session_state.selected_stage = st.session_state.stage_key
 
 
 # Criar os selectbox com key e on_change
@@ -254,6 +266,14 @@ selected_diff = st.sidebar.selectbox(
     on_change=update_diff,
 )
 
+selected_stage = st.sidebar.selectbox(
+    "Estágio",
+    stages,
+    index=stages.index(st.session_state.selected_stage),
+    key="stage_key",
+    on_change=update_stage,
+)
+
 # Aplicar filtros
 df_f = df_partidas.copy()
 if selected_version != "Todas":
@@ -264,6 +284,8 @@ elif selected_mp == "Não":
     df_f = df_f[df_f["multiplayer"] == False]
 if selected_diff != "Todas":
     df_f = df_f[df_f["difficulty"] == selected_diff]
+if selected_stage != "Todos":
+    df_f = df_f[df_f["stage"] == selected_stage]
 
 df_chars_f = df_personagens[df_personagens["partida_id"].isin(df_f["id"])]
 
@@ -326,7 +348,7 @@ with tab1:
             text="count",
         )
         fig.update_layout(dragmode=False)
-        st.plotly_chart(fig, width='stretch', config={"displayModeBar": False})
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
     else:
         st.info("Nenhuma derrota.")
 
